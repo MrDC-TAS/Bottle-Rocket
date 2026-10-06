@@ -58,6 +58,36 @@ body{background-color:var(--paper);background-image:linear-gradient(180deg,var(-
 .exemplar .imgframe{display:block;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:#FFFFFF}
 .exemplar img{display:block;width:100%;height:auto;max-width:100%}
 .exemplar figcaption{font-size:.82rem;color:var(--muted)}
+/* Testing at a glance */
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:.88rem;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.fcard{border:1px solid var(--line);border-radius:4px;padding:12px;display:grid;gap:6px;align-content:start;position:relative;background:var(--surface)}
+.fcard .fn{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--display);font-weight:700}
+.fcard h4{margin:0;font-family:var(--display);font-size:1.15rem;text-transform:uppercase;letter-spacing:.02em;padding-right:32px}
+.fcard svg{width:100%;height:auto;display:block;background:var(--paper);border-radius:3px}
+.fcard p{font-size:.9rem;color:var(--muted)}
+.flow .t{font-family:var(--mono);font-size:9px;fill:var(--muted)}
+.flow .t.ok{fill:var(--good);font-weight:500}.flow .t.strong{fill:var(--ink);font-weight:500}
+.flow .rb{fill:var(--surface);stroke:var(--ink);stroke-width:1.5}.flow .rn{fill:var(--accent-soft);stroke:var(--ink);stroke-width:1.5}
+.flow .dash{stroke-dasharray:5 3}.flow .rf{fill:var(--muted)}
+.flow .ln{stroke:var(--muted);stroke-width:1;fill:none}.flow .piv{fill:var(--ink)}
+.flow .card{fill:var(--blue-soft);stroke:var(--blue);stroke-width:1.2}
+.flow .dim{stroke:var(--blue);stroke-width:1.2;fill:none}
+.flow .arr{stroke:var(--ink);stroke-width:1.5;fill:none;marker-end:url(#ah)}
+.flow .orbit{fill:none;stroke:var(--muted);stroke-width:1.2;stroke-dasharray:3 4}
+.flow .str{stroke:var(--ink);stroke-width:1.2}.flow .hand{fill:var(--ink)}
+.flow .wt{fill:var(--blue);opacity:.35}.flow .bt{fill:none;stroke:var(--ink);stroke-width:1.5}
+.flow .wc{fill:var(--surface);stroke:var(--ink);stroke-width:1.5}.flow .wb{fill:var(--ink)}
+.flow .avg{fill:var(--accent-soft);stroke:var(--accent)}
+.flow .axis{stroke:var(--muted);stroke-width:1.2;fill:none}.flow .cbar{fill:var(--blue)}.flow .cbar.best{fill:var(--accent)}
+.cgc{fill:var(--surface);stroke:var(--blue);stroke-width:1.5}.cgf{fill:var(--blue)}
+.cpc{fill:var(--surface);stroke:var(--accent);stroke-width:1.5}.cpf{fill:var(--accent)}
+.ahp{fill:var(--ink)}
+.flow .loop{grid-column:1/-1}
+@media (min-width:1100px){.flow .loop{grid-column:span 2}}
+.loop{display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+.loop span{color:var(--ink)}
 /* Key terms + cloze */
 .terms{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 .term{border:1px solid var(--line);border-radius:4px;padding:12px;display:grid;gap:8px;align-content:start;min-width:0;background:var(--surface)}
@@ -250,6 +280,7 @@ td.calc{font-family:var(--mono);font-weight:500;color:var(--accent);white-space:
 </head>
 <body>
 <div class="sky" id="sky" aria-hidden="true"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ahp"/></marker></defs></svg>
 <div class="wrap">
   <header class="hero">
     <div class="hero-copy">
@@ -431,6 +462,15 @@ const STAGES=[
  ]}
 ];
 
+/* Diagram helpers for "Testing at a glance" */
+const RBODY=d=>`<path d="M0 -11 H120 V11 H0 Z" class="rb${d?" dash":""}"/><path d="M120 -11 Q144 -11 152 0 Q144 11 120 11 Z" class="rn${d?" dash":""}"/><path d="M0 -11 L-14 -24 L-10 -11 Z M0 11 L-14 24 L-10 11 Z" class="rf"/><rect x="-6" y="-4" width="6" height="8" class="rb"/>`;
+const ROCKET=(x,y,s,d)=>`<g transform="translate(${x} ${y}) scale(${s})">${RBODY(d)}</g>`;
+const ROCKETC=(cx,cy,s,deg)=>`<g transform="translate(${cx} ${cy}) rotate(${deg}) scale(${s}) translate(-75 0)">${RBODY(false)}</g>`;
+const CGSYM=(x,y,r)=>`<g><circle cx="${x}" cy="${y}" r="${r}" class="cgc"/><path d="M${x} ${y-r} A${r} ${r} 0 0 1 ${x+r} ${y} H${x} Z M${x} ${y+r} A${r} ${r} 0 0 1 ${x-r} ${y} H${x} Z" class="cgf"/></g>`;
+const CPSYM=(x,y,r)=>`<g><circle cx="${x}" cy="${y}" r="${r}" class="cpc"/><circle cx="${x}" cy="${y}" r="${r*.35}" class="cpf"/></g>`;
+const BOTTLE=(x,lv,lab)=>{const h=56*lv;return `<rect x="${x+1}" y="${80-h}" width="28" height="${h}" class="wt"/><path d="M${x} 80 V40 Q${x} 30 ${x+10} 28 V22 H${x+20} V28 Q${x+30} 30 ${x+30} 40 V80 Z" class="bt"/><text x="${x+15}" y="92" class="t strong" text-anchor="middle">${lab}</text>`};
+const WATCH=(x,y,v)=>`<rect x="${x+12}" y="${y-24}" width="8" height="5" class="wb"/><circle cx="${x+16}" cy="${y}" r="18" class="wc"/><text x="${x+16}" y="${y+4}" class="t strong" text-anchor="middle">${v} s</text>`;
+
 const EXTRA={
 brief:()=>`
 <section class="sec"><h3>Design brief</h3>
@@ -540,6 +580,61 @@ sketches:()=>`
 </div></section>`,
 
 prototype:()=>`
+<section class="sec"><div class="sec-title"><h3>Testing at a glance</h3><span class="label">7 steps · repeat to improve</span></div>
+<div class="legend"><span><svg viewBox="0 0 20 20" width="18" height="18">${CGSYM(10,10,8)}</svg> CG · centre of gravity (balance point of the mass)</span><span><svg viewBox="0 0 20 20" width="18" height="18">${CPSYM(10,10,8)}</svg> CP · centre of pressure (balance point of the shape)</span></div>
+<ol class="flow">
+ <li class="fcard"><span class="fn">1</span><h4>Build a quick prototype</h4>
+  <svg viewBox="0 0 200 110" role="img" aria-label="A rough prototype rocket with card fins and a foam nose cone">${ROCKET(30,55,1,true)}
+   <text x="44" y="98" class="t">card fins</text><text x="150" y="98" class="t">foam nose</text>
+   <path d="M60 90 L52 68" class="ln"/><path d="M160 88 L170 62" class="ln"/></svg>
+  <p>Card or Corflute fins and a rough nose cone. Fast, not pretty.</p></li>
+ <li class="fcard"><span class="fn">2</span><h4>Find the CG and CP</h4>
+  <svg viewBox="0 0 200 110" role="img" aria-label="Top: rocket balanced on a pivot at its centre of gravity. Bottom: card cut-out of the rocket outline balanced at its centre of pressure">
+   ${ROCKET(25,26,.8,false)}<path d="M104 36 L96 50 H112 Z" class="piv"/>${CGSYM(104,26,6)}
+   <text x="196" y="10" class="t" text-anchor="end">rocket + water</text>
+   <path d="M25 72 H150 Q172 72 178 80 Q172 88 150 88 H25 Z M25 72 L12 62 L16 72 Z M25 88 L12 98 L16 88 Z" class="card"/>
+   <path d="M128 88 L120 102 H136 Z" class="piv"/>${CPSYM(128,80,6)}
+   <text x="196" y="62" class="t" text-anchor="end">card cut-out</text></svg>
+  <p>Balance the rocket for the CG. Balance a card cut-out of its outline for the CP. Mark both.</p></li>
+ <li class="fcard"><span class="fn">3</span><h4>Check stability</h4>
+  <svg viewBox="0 0 200 110" role="img" aria-label="Rocket with CG nearer the nose than CP, separated by at least one body diameter">
+   ${ROCKET(20,50,1,false)}${CGSYM(118,50,6)}${CPSYM(84,50,6)}
+   <path d="M84 76 H118" class="dim"/><path d="M84 71 V81 M118 71 V81" class="dim"/>
+   <text x="101" y="92" class="t" text-anchor="middle">≥ 1 diameter</text>
+   <path d="M150 20 H186" class="arr"/><text x="150" y="13" class="t">nose</text>
+   <text x="101" y="106" class="t ok" text-anchor="middle">CG in front of CP = stable</text></svg>
+  <p>The CG must sit in front of the CP. Use the stability checker below.</p></li>
+ <li class="fcard"><span class="fn">4</span><h4>Swing test</h4>
+  <svg viewBox="0 0 200 110" role="img" aria-label="Rocket swung in a circle on a string tied at its centre of gravity, flying nose-first">
+   <circle cx="100" cy="62" r="40" class="orbit"/>
+   <path d="M100 62 L100 22" class="str"/><circle cx="100" cy="62" r="4" class="hand"/>
+   ${ROCKETC(100,22,.5,180)}
+   <path d="M62 50 Q60 60 63 72" class="arr"/>
+   <text x="196" y="96" class="t" text-anchor="end">string at CG</text><path d="M160 88 L104 46" class="ln"/></svg>
+  <p>Tie a string at the CG and swing it in an open space. Stable = nose-first.</p></li>
+ <li class="fcard"><span class="fn">5</span><h4>Plan a fair test</h4>
+  <svg viewBox="0 0 200 110" role="img" aria-label="Three identical bottles with different water levels: one quarter, one third and one half">
+   ${BOTTLE(30,.25,"1/4")}${BOTTLE(85,.33,"1/3")}${BOTTLE(140,.5,"1/2")}
+   <text x="100" y="12" class="t ok" text-anchor="middle">change ONE thing</text>
+   <text x="100" y="106" class="t" text-anchor="middle">same pressure, angle and rocket</text></svg>
+  <p>Change one variable only, e.g. water volume. Keep everything else the same.</p></li>
+ <li class="fcard"><span class="fn">6</span><h4>Launch and record</h4>
+  <svg viewBox="0 0 200 110" role="img" aria-label="Three stopwatches reading 4.6, 4.4 and 4.7 seconds, averaged to 4.57 seconds">
+   ${WATCH(34,40,"4.6")}${WATCH(84,40,"4.4")}${WATCH(134,40,"4.7")}
+   <path d="M60 74 L100 86 L140 74" class="ln"/>
+   <rect x="62" y="86" width="76" height="20" rx="3" class="avg"/><text x="100" y="100" class="t strong" text-anchor="middle">avg 4.57 s</text></svg>
+  <p>Three timers per launch. Enter every result in the test log and it averages them.</p></li>
+ <li class="fcard"><span class="fn">7</span><h4>Analyse and modify</h4>
+  <svg viewBox="0 0 200 110" role="img" aria-label="Bar chart of average airtime for three tests with the tallest bar highlighted, leading to the final design">
+   <path d="M30 90 H170 M30 90 V18" class="axis"/>
+   <rect x="45" y="44" width="26" height="46" class="cbar"/><rect x="87" y="28" width="26" height="62" class="cbar best"/><rect x="129" y="40" width="26" height="50" class="cbar"/>
+   <text x="58" y="102" class="t" text-anchor="middle">1/4</text><text x="100" y="102" class="t" text-anchor="middle">1/3</text><text x="142" y="102" class="t" text-anchor="middle">1/2</text>
+   <text x="100" y="22" class="t strong" text-anchor="middle">best</text></svg>
+  <p>Graph the results, find the best, and justify your changes with the numbers.</p></li>
+<li class="loop"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18 2v5h-5M6 22v-5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<span><b>Repeat steps 5–7</b> after each change. Each round of testing is evidence for your folio.</span></li>
+</ol>
+</section>
 <section class="sec"><div class="tool" id="stab-tool"></div></section>
 <section class="sec"><div class="tool" id="log-tool"></div></section>
 <section class="sec"><div class="tool">
